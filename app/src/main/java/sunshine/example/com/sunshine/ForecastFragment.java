@@ -15,6 +15,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.net.Uri;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by Felipe on 18/01/2015.
  */
@@ -74,10 +78,11 @@ public class ForecastFragment extends Fragment {
                 "Saturday - Cloudy - 74/55",
                 "Sunday - Sunny - 89/85"
         };
-
-        adaptador = new ArrayAdapter<String>(getActivity(),R.layout.list_item_forecast,R.id.list_item_forecast_textview,lista);
+        List<String> week = new ArrayList<String>(Arrays.asList(lista));
+        adaptador = new ArrayAdapter<String>(getActivity(),R.layout.list_item_forecast,R.id.list_item_forecast_textview,week);
         ListView listview = (ListView) rootView.findViewById(R.id.listview_forecast);
         listview.setAdapter(adaptador);
+
 
         return rootView;
     }
@@ -101,15 +106,19 @@ public class ForecastFragment extends Fragment {
         @Override
         protected void onPostExecute(String[] strings) {
             super.onPostExecute(strings);
+            Log.e("Procuraissoaqui","post execute é sucesso");
             try {
                 //adaptador = new ArrayAdapter<String>(getActivity(),R.layout.list_item_forecast,R.id.list_item_forecast_textview,strings);
 //            for(int i =0;i<strings.length;i++){
 //                adaptador.insert(strings[i],0);
 //            }
+                Log.e("Procuraissoaqui","la vem o clear");
                 adaptador.clear();
+                Log.e("Procuraissoaqui","ja foi o clear");
                 int currentAPI = android.os.Build.VERSION.SDK_INT;
                 if (currentAPI  >= Build.VERSION_CODES.HONEYCOMB){
                     // More optimal. Only refresh Adapter once.
+                    Log.e("Procuraissoaqui","adiciona tudo");
                     adaptador.addAll(strings);
                 }
                 else
@@ -117,6 +126,7 @@ public class ForecastFragment extends Fragment {
                     // Less optimal. Refresh Adapter on each addition.
                     for (String dayForecastStr : strings)
                     {
+                        Log.e("Procuraissoaqui","adicionando items");
                         adaptador.add(dayForecastStr);
                     }
                 }
@@ -130,6 +140,7 @@ public class ForecastFragment extends Fragment {
         @Override
         protected String[] doInBackground(Void... params){
             try {
+                Log.e("Procuraissoaqui","começou");
                 GetAPI api = new GetAPI();
                 Uri.Builder builder = new Uri.Builder();
                 builder.scheme("http")
@@ -144,9 +155,11 @@ public class ForecastFragment extends Fragment {
                         .appendQueryParameter("cnt","7");
                 //"http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7"
                 this.JSONString = api.getJSON(builder.build().toString());
+                Log.e("Procuraissoaqui","chegou até aqui");
             }catch(Exception e){
                 this.JSONString = null;
             }
+            Log.e("Procuraissoaqui","opa ta quase");
             String[] Dias = new String[7];
             try {
                 WeatherDataParser WDP = new WeatherDataParser();
@@ -154,6 +167,7 @@ public class ForecastFragment extends Fragment {
             }catch(Exception e){
                 return null;
             }
+            Log.e("Procuraissoaqui","deu zika");
 //            Log.e("Procuraissoaqui", Dias[0]);
 //            Log.e("Procuraissoaqui", Dias[1]);
 //            Log.e("Procuraissoaqui", Dias[2]);
